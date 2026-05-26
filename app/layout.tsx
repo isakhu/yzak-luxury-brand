@@ -3,7 +3,6 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import FloatingSocialButtons from "@/components/layout/FloatingSocialButtons";
-import SessionProvider from "@/components/providers/SessionProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -31,9 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body>
-        <SessionProvider>
         {children}
-        </SessionProvider>
         <FloatingSocialButtons />
         <Toaster
           position="bottom-right"
