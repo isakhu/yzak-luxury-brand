@@ -9,6 +9,7 @@ import HeroBanner from "@/components/home/HeroBanner";
 import { CATEGORIES } from "@/lib/utils";
 import { getCategoryImage, getProductImages } from "@/lib/images";
 import { CITY_VIBE_IMAGES } from "@/lib/images";
+import { getCatalogProductName } from "@/lib/product-catalog";
 
 async function getProducts(featured?: boolean, limit = 8): Promise<ProductCardData[]> {
   try {
@@ -35,7 +36,7 @@ async function getProducts(featured?: boolean, limit = 8): Promise<ProductCardDa
   } catch {
     return Array.from({ length: limit }, (_, i) => ({
       id: `placeholder-${i}`,
-      name: `Luxury Product ${i + 1}`,
+      name: getCatalogProductName("gold", i),
       slug: `product-${i + 1}`,
       price: 15000 + i * 2000,
       discount: i % 3 === 0 ? 10 : 0,

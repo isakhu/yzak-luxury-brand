@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 import { getCategoryImage, getSeedProductImages } from "../lib/images";
 import { CONTACT } from "../lib/contact";
+import { getAverageMarketPrice } from "../lib/market-pricing";
+import { getCatalogProductName } from "../lib/product-catalog";
 
 const prisma = new PrismaClient();
 
@@ -15,57 +17,7 @@ const categories = [
   { name: "Accessories", slug: "accessories" },
 ];
 
-const productNames: Record<string, string[]> = {
-  gold: [
-    "24K Gold Necklace",
-    "Gold Bangle Set",
-    "Royal Gold Ring",
-    "Ethiopian Gold Earrings",
-    "Heritage Gold Chain",
-  ],
-  diamonds: [
-    "Diamond Solitaire Ring",
-    "Brilliant Cut Pendant",
-    "Diamond Stud Earrings",
-    "Eternity Diamond Band",
-    "Luxury Diamond Bracelet",
-  ],
-  clothes: [
-    "Silk Evening Gown",
-    "Designer Blazer",
-    "Premium Cotton Shirt",
-    "Luxury Kaftan",
-    "Cashmere Wrap",
-  ],
-  shoes: [
-    "Italian Leather Loafers",
-    "Designer Heels",
-    "Luxury Sneakers",
-    "Suede Oxford Shoes",
-    "Embellished Sandals",
-  ],
-  watches: [
-    "Chronograph Gold Watch",
-    "Diamond Bezel Watch",
-    "Classic Dress Watch",
-    "Sport Luxury Watch",
-    "Limited Edition Timepiece",
-  ],
-  handbags: [
-    "Quilted Leather Bag",
-    "Croc-Embossed Tote",
-    "Evening Clutch",
-    "Designer Crossbody",
-    "Signature Shoulder Bag",
-  ],
-  accessories: [
-    "Silk Scarf Collection",
-    "Gold Cufflinks",
-    "Designer Sunglasses",
-    "Leather Belt",
-    "Pearl Brooch Set",
-  ],
-};
+const productCount = 8;
 
 async function main() {
   const adminPin = await hash("1234", 10);
@@ -112,26 +64,32 @@ async function main() {
       },
     });
 
-    const names = productNames[cat.slug] || [];
-
-    for (let i = 0; i < names.length; i++) {
-      const slug = `${cat.slug}-${names[i].toLowerCase().replace(/\s+/g, "-")}`;
-      const price = Math.floor(Math.random() * 50000) + 5000;
+    for (let i = 0; i < productCount; i++) {
+      const name = getCatalogProductName(cat.slug, i);
+      const slug = `${cat.slug}-${name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "")}`;
+      const price = getAverageMarketPrice(cat.slug, i);
       const images = getSeedProductImages(cat.slug, i);
 
       await prisma.product.upsert({
         where: { slug },
         update: {
+          name,
+          description: `${name} from Yzak Luxury Brand, priced for the Ethiopian market.`,
+          price,
+          brand: "Yzak Luxury Brand",
           images,
           status: "ACTIVE",
         },
         create: {
-          name: names[i],
-          description: `Premium ${names[i]} from Yzak Luxury Brand. Crafted with exceptional quality for discerning customers in Ethiopia.`,
+          name,
+          description: `${name} from Yzak Luxury Brand, priced for the Ethiopian market.`,
           slug,
           price,
           discount: i % 3 === 0 ? 10 : 0,
-          brand: "Yzak",
+          brand: "Yzak Luxury Brand",
           stock: Math.floor(Math.random() * 20) + 1,
           images,
           sizes: ["S", "M", "L", "XL"],
@@ -144,7 +102,7 @@ async function main() {
     }
   }
 
-  console.log("Seed completed: 35 products with category-specific Unsplash images");
+  console.log("Seed completed: 56 Yzak products with Ethiopian market prices");
 }
 
 main()

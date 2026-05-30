@@ -1,12 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import {
   ShoppingCart,
   Heart,
-  User,
   Search,
   Menu,
   X,
@@ -104,10 +104,16 @@ export default function Navbar() {
             </Link>
             <Link
               href="/auth/login"
-              className="p-2 text-cream hover:text-gold transition-colors"
+              className="p-1 text-cream hover:text-gold transition-colors"
               title="Account"
             >
-              <User className="w-6 h-6" />
+              <Image
+                src="/images/avatars/ybrand.svg"
+                alt="ybrand"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
             </Link>
             <button
               className="md:hidden p-2 text-cream"

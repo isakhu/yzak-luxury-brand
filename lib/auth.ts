@@ -7,6 +7,10 @@ const ADMIN_EMAIL = "admin@yzak.com";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
+  secret:
+    process.env.AUTH_SECRET ??
+    process.env.NEXTAUTH_SECRET ??
+    "yzak-luxury-brand-local-development-secret",
   providers: [
     Credentials({
       name: "credentials",
@@ -79,5 +83,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 });
 
 export function getPostLoginPath(email: string): string {
-  return email === ADMIN_EMAIL ? "/admin" : "/";
+  return "/";
 }

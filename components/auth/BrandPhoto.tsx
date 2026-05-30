@@ -8,7 +8,7 @@ export default function BrandPhoto() {
 
   return (
     <div className="relative w-full max-w-md aspect-[3/4] rounded-lg overflow-hidden border-2 border-gold/40 bg-card">
-      {/* Replace brand-photo.jpg in /public folder with your photo */}
+      {/* Render the brand photo; if it fails, show a minimal neutral fallback. */}
       {!error ? (
         <Image
           src="/brand-photo.jpg"
@@ -19,14 +19,9 @@ export default function BrandPhoto() {
           priority
         />
       ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-card to-navy">
-          <div className="w-24 h-24 rounded-full border-2 border-dashed border-gold/50 flex items-center justify-center mb-4">
-            <span className="text-4xl text-gold/60">YZ</span>
-          </div>
-          <p className="text-cream/80 text-sm leading-relaxed">
-            Add your photo here — replace{" "}
-            <code className="text-gold text-xs">/public/brand-photo.jpg</code>
-          </p>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-card to-navy">
+          {/* Minimal fallback: initials only, no instructional text */}
+          <div className="w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center text-3xl text-gold">YZ</div>
         </div>
       )}
     </div>

@@ -1,15 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Heart, Star, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/store/cart";
 import { useWishlistStore } from "@/store/wishlist";
 import { formatPrice, calcDiscountedPrice } from "@/lib/utils";
-import { resolveProductImageSrc } from "@/lib/images";
+import { useState } from "react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import { resolveProductImageSrc, PLACEHOLDER_IMAGE } from "@/lib/images";
 
 export interface ProductCardData {
   id: string;
@@ -27,11 +27,11 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
   const addToCart = useCartStore((s) => s.addItem);
   const { toggleItem, isInWishlist } = useWishlistStore();
   const finalPrice = calcDiscountedPrice(product.price, product.discount);
-  const image = resolveProductImageSrc(
-    product.categorySlug,
-    product.images[0]
-  );
   const inWishlist = isInWishlist(product.id);
+  const [imgError, setImgError] = useState(false);
+  const image = imgError
+    ? PLACEHOLDER_IMAGE
+    : resolveProductImageSrc(product.categorySlug, product.images[0]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -67,12 +67,11 @@ export default function ProductCard({ product }: { product: ProductCardData }) {
       className="group block bg-card rounded-lg border border-gold/10 hover:border-gold transition-all duration-300 overflow-hidden"
     >
       <div className="relative aspect-square overflow-hidden">
-        <Image
+        <img
           src={image}
           alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 768px) 50vw, 25vw"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         {product.discount > 0 && (
           <div className="absolute top-2 left-2">
