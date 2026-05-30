@@ -27,7 +27,11 @@ interface Address {
 }
 
 export default function AccountPage() {
-  const { data: session, status } = useSession();
+  const _sessionHook = useSession() as
+    | { data?: any; status?: "loading" | "authenticated" | "unauthenticated" }
+    | undefined;
+  const session = _sessionHook?.data;
+  const status = _sessionHook?.status ?? "unauthenticated";
   const wishlistItems = useWishlistStore((s) => s.items);
   const [orders, setOrders] = useState<Order[]>([]);
   const [addresses, setAddresses] = useState<Address[]>([]);

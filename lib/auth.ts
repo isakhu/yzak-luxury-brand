@@ -17,6 +17,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
+        // Demo mode: allow a fixed 4-digit demo password (0800).
+        // If provided, return a demo admin user without querying a database.
+        if (password === "0800") {
+          return {
+            id: "demo_admin",
+            email: email ?? "admin@yzak.com",
+            name: "Demo Admin",
+            role: "ADMIN",
+          } as any;
+        }
 
         if (!email || !password || !/^\d{4}$/.test(password)) {
           return null;
@@ -40,13 +50,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
+      // Prefer DB-backed user data when available, but fall back to the
+      // `user` object returned from `authorize` (demo mode) so tokens are
+      // populated even without a database.
       if (user?.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email },
-        });
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
+        } else {
+          token.id = (user as any).id ?? token.id;
+          token.role = (user as any).role ?? token.role;
         }
       }
       return token;

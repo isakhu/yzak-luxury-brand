@@ -17,7 +17,11 @@ import toast from "react-hot-toast";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const _sessionHook = useSession() as
+    | { data?: any; status?: "loading" | "authenticated" | "unauthenticated" }
+    | undefined;
+  const session = _sessionHook?.data;
+  const status = _sessionHook?.status ?? "unauthenticated";
   const { items, getSubtotal, clearCart } = useCartStore();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
