@@ -5,7 +5,12 @@ import { CONTACT } from "@/lib/contact";
 import SocialLinks from "@/components/layout/SocialLinks";
 
 export default async function Footer() {
-  let settings = {
+  let settings: {
+    hawassaPhone: string;
+    hawassaAddress: string;
+    direDawaPhone: string;
+    direDawaAddress: string;
+  } = {
     hawassaPhone: CONTACT.phone,
     hawassaAddress: CONTACT.hawassaAddress,
     direDawaPhone: CONTACT.phone,

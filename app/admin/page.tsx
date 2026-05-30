@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 import { formatPrice } from "@/lib/utils";
 import Link from "next/link";
 
 export default async function AdminDashboard() {
-  let recentOrders: Awaited<ReturnType<typeof prisma.order.findMany>> = [];
+  let recentOrders: Prisma.OrderGetPayload<{
+    include: { user: true };
+  }>[] = [];
   let orderCount = 0;
   let products: Awaited<ReturnType<typeof prisma.product.findMany>> = [];
   let customers = 0;
